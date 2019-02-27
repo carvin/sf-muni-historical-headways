@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      @import url("https://use.typekit.net/adf1zaj.css");
+    </style>
+    <title>Historical Muni Wait Times</title>
+  </head>
+  <body>
+    <div id="app">
+      <div class="card-wrap">
+        <div class="headways-bg"></div>
+        <h1>Historical Muni Wait Times</h1>
+        <span class="subtitle">by <a href="https://twitter.com/chrisarvinsf" target="_blank">Chris Arvin</a></span>
+        <span class="small-dropdown-title">Select route &amp; time</span>
+        <div class="dropdowns">
+          <dropdown v-bind:options="routes" title="Select a route" v-on:change-value="updateRoute" default='Average' class="route-dropdown"></dropdown>
+          <dropdown v-bind:options="timeOptions" title="Time of day" v-on:change-value="updateTime" default="A.M. Peak" class="time-dropdown"></dropdown>
+        </div>
+        <headway-display v-bind:headways="headways" v-bind:note="note" />
+      </div>
+    </div>
+    <script type="text/x-template" id="dropdown-template">
+      <div class="dropdown">
+        <label v-bind:for="id">{{ title }}</label>
+        <div class="dropdown-select">
+          <select v-bind:id="id" v-model="value" v-on:change="onChange($event)">
+            <option v-for="option in options" v-bind:value="option.value ? option.value : option">
+              {{ option.title ? option.title : option }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </script>
+    <script type="text/x-template" id="headway-display-template">
+      <div class="headway-display-wrapper">
+        <div v-if="note" class="headway-note">Note: {{ note }}</div>
+        <ul class="headways">
+          <li v-for="headway in headways">
+            <div class="headway-year">{{ headway.year }}</div>
+            <div class="headway-value">
+              <div class="headway-legend">Every</div>
+              <div class="headway-number">
+                {{ headway.min }}<slot v-if="headway.min != headway.max"> - {{ headway.max }}</slot>
+              </div>
+              <div class="headway-legend">minutes</div>
+            </div>
+          </li>
+        </ul>
+        <span class="data-note" style="clear: both; display: block"><a href="https://docs.google.com/document/d/1OsCohGPpHM0ykJL2t0nISO9jXreUPI4da4hrLxG4Gbs/edit?usp=sharing" target="_blank">Citations &amp; data</a><slot v-if="iframe"> · <a href="https://sfstreetcars.co/headways" target="_blank">Open in new window</a></slot></span>
+      </div>
+    </script>
+    <script src="data/headways.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="components/dropdown.js"></script>
+    <script src="components/headway-display.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
